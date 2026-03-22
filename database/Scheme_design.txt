@@ -1,0 +1,135 @@
+------------------------------------------------------------------
+AI-DRIVEN ACCOUNTS RECEIVABLE RISK & CREDIT OPTIMIZATION SYSTEM
+SCHEMA DESIGN DOCUMENT
+------------------------------------------------------------------
+
+1. PROJECT OVERVIEW
+--------------------------------------------------------
+Project Name:
+AI-Driven Accounts Receivable Risk & Credit Optimization System
+
+Purpose:
+To simulate an ERP system for Distributors, Dealers, and Hospitals,
+and build a predictive Accounts Receivable (AR) risk model to reduce
+Days Sales Outstanding (DSO) and optimize credit limits.
+
+Data Scope:
+Synthetic ERP data will be generated for:
+- Customers
+- Invoices
+- Payments
+
+The system will later use this data for:
+- Machine Learning risk prediction
+- Credit limit optimization
+- KPI monitoring
+- Executive dashboard reporting
+
+
+2. BUSINESS ASSUMPTIONS
+--------------------------------------------------------
+
+1. Credit Term = 60 days
+2. Cost of Capital = 12% annually
+3. Customer Risk Distribution:
+   - Low Risk = 40%
+   - Medium Risk = 35%
+   - High Risk = 25%
+4. Delay Patterns:
+   - Low Risk: -5 to +2 days (early or on-time payment)
+   - Medium Risk: 5 to 15 days delay
+   - High Risk: 20 to 45 days delay
+5. Data Period: Last 12 months
+6. Estimated Customers: 400
+7. Estimated Invoices: 10,000+
+8. One invoice will have one payment for simplicity.
+
+
+3. TABLE STRUCTURES
+--------------------------------------------------------
+
+--------------------------------------------------------
+TABLE 1: customers
+--------------------------------------------------------
+Description:
+Stores master details of Distributors, Dealers, and Hospitals.
+
+Columns:
+
+1. customer_id        VARCHAR(20)  PRIMARY KEY
+2. customer_type      VARCHAR(50)  (Distributor / Dealer / Hospital)
+3. region             VARCHAR(50)  (North / South / East / West)
+4. credit_limit       DECIMAL(15,2)
+5. risk_profile       VARCHAR(20)  (Low / Medium / High)
+
+Note:
+risk_profile is used internally to generate realistic payment behavior.
+It will NOT be used in dashboard or final reporting.
+
+
+--------------------------------------------------------
+TABLE 2: invoices
+--------------------------------------------------------
+Description:
+Stores invoice transaction details.
+
+Columns:
+
+1. invoice_id         VARCHAR(20) PRIMARY KEY
+2. customer_id        VARCHAR(20) FOREIGN KEY REFERENCES customers(customer_id)
+3. invoice_date       DATE
+4. due_date           DATE
+5. invoice_amount     DECIMAL(15,2)
+
+Business Logic:
+Due Date = Invoice Date + 60 days
+
+
+--------------------------------------------------------
+TABLE 3: payments
+--------------------------------------------------------
+Description:
+Stores payment transaction details linked to invoices.
+
+Columns:
+
+1. payment_id         INT AUTO_INCREMENT PRIMARY KEY
+2. invoice_id         VARCHAR(20) FOREIGN KEY REFERENCES invoices(invoice_id)
+3. payment_date       DATE
+4. payment_amount     DECIMAL(15,2)
+
+Business Logic:
+Payment behavior depends on customer risk_profile.
+
+
+4. RELATIONSHIPS
+--------------------------------------------------------
+
+1. One Customer → Many Invoices
+2. One Invoice → One Payment
+
+Relationship Mapping:
+
+customers.customer_id  → invoices.customer_id
+invoices.invoice_id    → payments.invoice_id
+
+
+5. DATA LOGIC NOTES (FOR ML & KPI STAGE)
+--------------------------------------------------------
+
+1. Delay_Days = Payment_Date – Due_Date
+2. Delay_Flag = 1 if Delay_Days > 0 else 0
+3. Credit Utilization = Outstanding / Credit Limit
+4. Average Delay will be calculated at customer level
+5. Late Payment Frequency will be calculated per customer
+6. Logistic Regression will be used to predict delay probability
+7. Risk Categorization:
+   - 0–30%  → Low Risk
+   - 31–60% → Medium Risk
+   - 61–100% → High Risk
+8. Credit Recommendation:
+   - High Risk → Reduce credit limit by 30%
+   - Medium Risk → Maintain current credit limit
+   - Low Risk → Increase credit limit by 15%
+9. Expected Loss = Probability of Default × Exposure
+10. Working Capital Blocked = Outstanding × Cost of Capital

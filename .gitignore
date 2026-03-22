@@ -1,0 +1,69 @@
+# -----------------------------
+# Python
+# -----------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Python distribution
+build/
+dist/
+*.egg-info/
+
+# -----------------------------
+# Jupyter Notebook
+# -----------------------------
+.ipynb_checkpoints/
+
+# -----------------------------
+# Environment Variables
+# -----------------------------
+.env
+.env.*
+
+# -----------------------------
+# VS Code
+# -----------------------------
+.vscode/
+.history/
+
+# -----------------------------
+# Mac / Windows System Files
+# -----------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# -----------------------------
+# Log Files
+# -----------------------------
+*.log
+
+# -----------------------------
+# Temporary Files
+# -----------------------------
+*.tmp
+*.temp
+
+# -----------------------------
+# Power BI Temporary Files
+# -----------------------------
+*.pbix.autosave
+
+# -----------------------------
+# Database Credentials (Safety)
+# -----------------------------
+config.py
+secrets.py
+
+# -----------------------------
+# Python Cache
+# -----------------------------
+*.pyo
+*.pyd
